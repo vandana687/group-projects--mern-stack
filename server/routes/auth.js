@@ -68,10 +68,11 @@ router.post('/register', [
       }
     });
   } catch (error) {
-    console.error('Register error:', error);
+    console.error('Register error:', error.message, error.stack);
     res.status(500).json({
       success: false,
-      message: 'Server error during registration'
+      message: error.message || 'Server error during registration',
+      error: error.message
     });
   }
 });
