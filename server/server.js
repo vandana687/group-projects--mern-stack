@@ -63,6 +63,17 @@ app.use('/api/time-logs', require('./routes/timeLogs'));
 app.use('/api/activity', require('./routes/activity'));
 app.use('/api/upload', require('./routes/upload'));
 
+// Serve React build in production
+if (process.env.NODE_ENV === 'production') {
+  const clientBuildPath = path.join(__dirname, '../client/build');
+  app.use(express.static(clientBuildPath));
+
+  // Fallback to index.html for client-side routing
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+  });
+}
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
