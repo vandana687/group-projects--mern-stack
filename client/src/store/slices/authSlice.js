@@ -6,7 +6,9 @@ export const register = createAsyncThunk(
   'auth/register',
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await API.post('/auth/register', userData);
+      // Only send required fields to backend
+      const { confirmPassword, ...registrationData } = userData;
+      const response = await API.post('/auth/register', registrationData);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       return response.data;
