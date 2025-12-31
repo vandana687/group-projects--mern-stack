@@ -1,37 +1,35 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const Task = require('../models/Task');
 const Activity = require('../models/Activity');
 const auth = require('../middleware/auth');
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadDir = path.join(__dirname, '../../uploads');
-    
-    // Create uploads directory if it doesn't exist
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Configure multer with Cloudinary storage
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'project-management/task-files',
+    resource_type: 'auto', // Handle all file types
+    allowed_formats: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'zip', 'rar', 'jpg', 'jpeg', 'png', 'gif']
   }
 });
 
 const fileFilter = (req, file, cb) => {
   // Allow common file types
   const allowedTypes = /jpeg|jpg|png|gif|pdf|doc|docx|xls|xlsx|txt|zip|rar/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
+  const extname = allowedTypes.test(file.originalname.split('.').pop().toLowerCase());
 
-  if (extname && mimetype) {
+  if (extname) {
     return cb(null, true);
   } else {
     cb(new Error('File type not allowed. Allowed types: images, PDF, documents, archives'));
@@ -71,7 +69,8 @@ router.post('/task/:taskId', auth, upload.single('file'), async (req, res) => {
 
     const fileData = {
       filename: req.file.originalname,
-      url: `/uploads/${req.file.filename}`,
+      url: req.file.path, // Cloudinary URL
+      cloudinaryPublicId: req.file.filename, // For deletion
       uploadedBy: req.user._id,
       uploadedAt: new Date()
     };
@@ -139,9 +138,7 @@ router.delete('/task/:taskId/file/:filename', auth, async (req, res) => {
       });
     }
 
-    const attachment = task.attachments.find(
-      att => att.url === `/uploads/${req.params.filename}`
-    );
+    const attachment = task.attachments.find(att => att.filename === decodeURIComponent(req.params.filename));
 
     if (!attachment) {
       return res.status(404).json({
@@ -158,17 +155,19 @@ router.delete('/task/:taskId/file/:filename', auth, async (req, res) => {
       });
     }
 
-    // Remove from task
-    task.attachments = task.attachments.filter(
-      att => att.url !== `/uploads/${req.params.filename}`
-    );
-    await task.save();
-
-    // Delete physical file
-    const filePath = path.join(__dirname, '../../uploads', req.params.filename);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    // Delete from Cloudinary if public_id exists
+    if (attachment.cloudinaryPublicId) {
+      try {
+        await cloudinary.uploader.destroy(attachment.cloudinaryPublicId);
+      } catch (err) {
+        console.error('Cloudinary delete error:', err);
+        // Continue even if Cloudinary deletion fails
+      }
     }
+
+    // Remove from task
+    task.attachments = task.attachments.filter(att => att.filename !== attachment.filename);
+    await task.save();
 
     res.json({
       success: true,
@@ -306,8 +305,5 @@ router.delete('/task/:taskId/link/:linkId', auth, async (req, res) => {
     });
   }
 });
-
-// Serve uploaded files
-router.use('/files', express.static(path.join(__dirname, '../../uploads')));
 
 module.exports = router;

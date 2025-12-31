@@ -308,7 +308,7 @@ const FileUpload = ({ task, onClose }) => {
                   <span className="attachment-icon">{isLink ? '🔗' : getFileIcon(att.filename)}</span>
                   <div className="attachment-details">
                     <a 
-                      href={isLink ? att.url : `${window.location.origin}${att.url}`} 
+                      href={att.url} 
                       target="_blank" 
                       rel="noopener noreferrer" 
                       className="attachment-name"
