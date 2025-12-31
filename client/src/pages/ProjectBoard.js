@@ -99,69 +99,79 @@ const ProjectBoard = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Header with Gradient */}
       <div className="sticky top-0 z-40 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center justify-center w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
+            {/* Title */}
+            <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+              <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-white/20 backdrop-blur-sm rounded-lg sm:rounded-xl flex-shrink-0">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
               </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">{currentProject?.name || 'Project Board'}</h1>
+              <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-white drop-shadow-lg truncate">{currentProject?.name || 'Project Board'}</h1>
             </div>
-            <div className="flex items-center space-x-3">
+            
+            {/* Action Buttons */}
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap justify-end">
+              {/* Mobile Menu - Show icons only on mobile */}
               <button 
                 onClick={() => setShowProgressSidebar(true)} 
-                className="hidden md:flex px-4 py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-lg transition duration-200 backdrop-blur-sm border border-white/30 items-center space-x-2"
+                className="p-2 sm:px-3 sm:py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-lg transition duration-200 backdrop-blur-sm border border-white/30 items-center space-x-2 hidden xs:flex sm:flex"
                 title="View Progress"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
-                <span>Progress</span>
+                <span className="hidden sm:inline text-xs sm:text-sm">Progress</span>
               </button>
               <button 
                 onClick={() => setShowMembersSidebar(true)} 
-                className="hidden md:flex px-4 py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-lg transition duration-200 backdrop-blur-sm border border-white/30 items-center space-x-2"
+                className="p-2 sm:px-3 sm:py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-lg transition duration-200 backdrop-blur-sm border border-white/30 items-center space-x-2 hidden xs:flex sm:flex"
                 title="View Members"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
-                <span>Team</span>
+                <span className="hidden sm:inline text-xs sm:text-sm">Team</span>
               </button>
               <button 
                 onClick={() => setShowTimeSidebar(true)} 
-                className="hidden md:flex px-4 py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-lg transition duration-200 backdrop-blur-sm border border-white/30 items-center space-x-2"
+                className="p-2 sm:px-3 sm:py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-lg transition duration-200 backdrop-blur-sm border border-white/30 items-center space-x-2 hidden xs:flex sm:flex"
                 title="View Time Logs"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span>Time</span>
+                <span className="hidden sm:inline text-xs sm:text-sm">Time</span>
               </button>
               <button 
                 onClick={() => setShowActivitySidebar(true)} 
-                className="hidden md:flex px-4 py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-lg transition duration-200 backdrop-blur-sm border border-white/30 items-center space-x-2"
+                className="p-2 sm:px-3 sm:py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-lg transition duration-200 backdrop-blur-sm border border-white/30 items-center space-x-2 hidden xs:flex sm:flex"
                 title="View Activity Log"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <span>Logs</span>
+                <span className="hidden sm:inline text-xs sm:text-sm">Logs</span>
               </button>
+              
+              {/* Back Button */}
               <button 
                 onClick={() => navigate('/dashboard')} 
-                className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-lg transition duration-200 backdrop-blur-sm border border-white/30"
+                className="p-2 sm:px-3 sm:py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-lg transition duration-200 backdrop-blur-sm border border-white/30 text-xs sm:text-sm"
+                title="Back"
               >
-                ← Back
+                <span className="sm:hidden">←</span>
+                <span className="hidden sm:inline">← Back</span>
               </button>
+              
+              {/* New Task Button */}
               <button 
                 onClick={() => setShowModal(true)} 
-                className="px-4 py-2 bg-white text-indigo-600 font-semibold rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition duration-200 flex items-center space-x-2"
+                className="p-2 sm:px-3 sm:py-2 bg-white text-indigo-600 font-semibold rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition duration-200 flex items-center space-x-1 text-xs sm:text-sm whitespace-nowrap"
               >
                 <span>+</span>
-                <span>New Task</span>
+                <span className="hidden sm:inline">New Task</span>
               </button>
             </div>
           </div>
